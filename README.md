@@ -2,8 +2,11 @@ oe-reeksen-arrays-collections-adressen-start
 Bijhouden van adressen in een list van arrays
 # Adressenlijst
 Screenshot van het resultaat
+
+
 ![screenshot](/images/screenshot.png)
-Kies passende namen voor de controls.
+
+
 ## Adressen bijhouden
 In List<string[]> adressen houd je de adressen bij. 
 
