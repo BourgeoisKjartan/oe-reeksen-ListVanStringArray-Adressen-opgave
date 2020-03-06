@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Adressen.Wpf
 {
@@ -20,6 +9,7 @@ namespace Adressen.Wpf
     /// </summary>
     public partial class MainWindow : Window
     {
+
         //Structuur array:
         //Straat - Huisnummer - Busnummer - Postcode - Gemeente
 
@@ -30,6 +20,12 @@ namespace Adressen.Wpf
 
 
 
+
+
+
+        List<string[]> adressen;
+        List<string> adresInfo;
+
         //Declaratie van de list van string arrays met de naam 'adressen'
 
         int lstAdressenIndex;
@@ -38,6 +34,7 @@ namespace Adressen.Wpf
         {
             InitializeComponent();
 
+            adressen = new List<string[]>();
             //Instantiëring van de list van string arrays met de naam 'adressen'
             MaakAdressen();
             MaakAdresInfo();
@@ -53,17 +50,30 @@ namespace Adressen.Wpf
 
         void VoegAdresToe(string csvAdres)
         {
-
+            string[] adres;
+            adres = csvAdres.Split(';');
+            adressen.Add(adres);
 
         }
 
         void MaakAdresInfo()
         {
+            adresInfo = new List<string>();
 
+            //Elementen met index 0 en 4 uit de array worden opgehaald.
+            //Dit gebeurt voor elk element uit de List
+            adresInfo.Add($"{adressen[0][0]} - {adressen[0][4]}");
+            adresInfo.Add($"{adressen[1][0]} - {adressen[1][4]}");
+            adresInfo.Add($"{adressen[2][0]} - {adressen[2][4]}");
+            adresInfo.Add($"{adressen[3][0]} - {adressen[3][4]}");
+
+            KoppelLijst();
         }
 
         void KoppelLijst()
         {
+            lstAdressen.ItemsSource = adresInfo;
+            lstAdressen.Items.Refresh();
 
         }
 
@@ -72,15 +82,53 @@ namespace Adressen.Wpf
 
         private void btnOpslaan_Click(object sender, RoutedEventArgs e)
         {
+            adressen[lstAdressenIndex][0] = txtStraat.Text;
+            adressen[lstAdressenIndex][1] = txtHuisNr.Text;
+            adressen[lstAdressenIndex][2] = txtBus.Text;
+            adressen[lstAdressenIndex][3] = txtPostCode.Text;
+            adressen[lstAdressenIndex][4] = txtGemeente.Text;
+            adresInfo[lstAdressenIndex] = $"{adressen[lstAdressenIndex][0]} - {adressen[lstAdressenIndex][4]}";
 
+            KoppelLijst();
+
+            lstAdressen.SelectedItem = null;
 
         }
 
-
-        private void lstAdressen_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void lstAdressen_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            lstAdressenIndex = lstAdressen.SelectedIndex;
+            if (lstAdressen.SelectedItem != null)
+            {
+                lstAdressenIndex = lstAdressen.SelectedIndex;
+                txtStraat.Text = adressen[lstAdressenIndex][0];
+                txtHuisNr.Text = adressen[lstAdressenIndex][1];
+                txtBus.Text = adressen[lstAdressenIndex][2];
+                txtPostCode.Text = adressen[lstAdressenIndex][3];
+                txtGemeente.Text = adressen[lstAdressenIndex][4];
+                btnOpslaan.IsEnabled = true;
+            }
+            else
+            {
+                lstAdressenIndex = -1;
+                txtStraat.Text = string.Empty;
+                txtHuisNr.Text = string.Empty;
+                txtBus.Text = string.Empty;
+                txtPostCode.Text = string.Empty;
+                txtGemeente.Text = string.Empty;
+                btnOpslaan.IsEnabled = false;
+            }
+        }
 
+
+        private void btnAnnuleren_Click(object sender, RoutedEventArgs e)
+        {
+            lstAdressen.SelectedItem = null;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            btnOpslaan.IsEnabled = false;
         }
     }
 }
+
